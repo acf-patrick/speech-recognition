@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const StyledChooseButton = styled.button`
+const StyledChooseButton = styled.button`
   all: unset;
   background-color: transparent;
   border: solid 1px ${({ theme }) => theme.colors.primary};
@@ -18,3 +18,5 @@ export const StyledChooseButton = styled.button`
     color: ${({ theme }) => theme.colors.background};
   }
 `;
+
+export default StyledChooseButton;

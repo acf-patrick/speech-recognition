@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { StyledApp } from "./components/app-styled";
+import {
+  StyledApp,
+  StyledChooseButton,
+  StyledTranscriptButton,
+  StyledActions,
+} from "./components";
 import { GlobalStyles } from "./styles/globalStyles";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./styles/theme";
 import SelectBox, { SelectBoxProps } from "./components/SelectBox";
-import { StyledChooseButton } from "./components/choose-button.styled";
 import { AiFillFileAdd, AiFillSave, AiOutlineAudio } from "react-icons/ai";
-import { StyledTranscriptButton } from "./components/transcript-button.styled";
-import { StyledActions } from "./components/actions.styled";
 
 const options: SelectBoxProps[] = [
   {

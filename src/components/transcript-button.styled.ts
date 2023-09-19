@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const StyledTranscriptButton = styled.button`
+const StyledTranscriptButton = styled.button`
   width: 200px;
   height: 200px;
   border-radius: 100%;
@@ -26,3 +26,5 @@ export const StyledTranscriptButton = styled.button`
     font-size: 65px;
   }
 `;
+
+export default StyledTranscriptButton;

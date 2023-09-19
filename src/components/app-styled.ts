@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const StyledApp = styled.div`
+const StyledApp = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,3 +26,5 @@ export const StyledApp = styled.div`
     cursor: pointer;
   }
 `;
+
+export default StyledApp;

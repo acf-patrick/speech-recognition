@@ -4,12 +4,15 @@ import {
   StyledChooseButton,
   StyledTranscriptButton,
   StyledActions,
+  StyledError,
+  SelectBox,
 } from "./components";
 import { GlobalStyles } from "./styles/globalStyles";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./styles/theme";
-import SelectBox, { SelectBoxProps } from "./components/SelectBox";
 import { AiFillFileAdd, AiFillSave, AiOutlineAudio } from "react-icons/ai";
+import { BiError } from "react-icons/bi";
+import { dialog } from "@tauri-apps/api";
 
 const langList = {
   label: "Langue",
@@ -29,7 +32,7 @@ const formatList = {
     { name: "VTT", code: "vtt" },
     { name: "SRT", code: "srt" },
     { name: "LRC", code: "lrc" },
-    { name: "CSV", code: "cvs" },
+    { name: "CSV", code: "csv" },
     { name: "JSON", code: "json" },
   ],
 };
@@ -38,16 +41,49 @@ function App() {
   const [language, setLanguage] = useState("en");
   const [outputFormat, setOutputFormat] = useState("txt");
   const [chosenFilePath, setChosenFilePath] = useState("");
-  const [outputFolderPath, setChosenFolderPath] = useState("");
+  const [outputPath, setOutputPath] = useState("");
   const [error, setError] = useState("");
 
   const formOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
 
-  const chooseOutputOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {};
+  const chooseOutputOnClick = () => {
+    dialog
+      .save({
+        filters: [
+          {
+            name: "Fichier texte",
+            extensions: [outputFormat],
+          },
+        ],
+      })
+      .then((path) => {
+        if (path) {
+          setOutputPath(path);
+        }
+      })
+      .catch();
+  };
 
-  const chooseInputOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {};
+  const chooseInputOnClick = () => {
+    dialog
+      .open({
+        filters: [
+          {
+            name: "Fichier audio",
+            extensions: ["wav", "mp3", "mp4", "ogg", "flac"],
+          },
+        ],
+        title: "Choisir le fichier audio",
+      })
+      .then((path) => {
+        if (path) {
+          setChosenFilePath(path as string);
+        }
+      })
+      .catch((err) => console.error(err));
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -65,6 +101,14 @@ function App() {
             formatList.options.find((opt) => opt.code === outputFormat)!.name
           }
         />
+        {error ? (
+          <StyledError>
+            <BiError />
+            <span>{error}</span>
+          </StyledError>
+        ) : (
+          <div className="error"></div>
+        )}
         <StyledActions>
           <StyledChooseButton
             onClick={chooseInputOnClick}

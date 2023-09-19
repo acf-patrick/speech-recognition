@@ -5,10 +5,8 @@ const StyledApp = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  width: 640px;
-  height: 480px;
+  width: ${({ theme }) => theme.sizes.window.width};
   overflow: hidden;
-  border: solid 1px red;
   margin: 0 auto;
   gap: 1rem;
 
@@ -29,6 +27,10 @@ const StyledApp = styled.form`
       width: 1.5rem;
       height: 1.5rem;
     }
+  }
+
+  .error {
+    height: 3rem;
   }
 `;
 

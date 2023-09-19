@@ -9,4 +9,10 @@ export const theme = {
       background: "#080139",
     },
   },
+  sizes: {
+    window: {
+      width: "640px",
+      height: "480px",
+    },
+  },
 };

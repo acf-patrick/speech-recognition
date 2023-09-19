@@ -73,11 +73,8 @@ const StyledSelectBox = styled.div`
         border-bottom: solid 2px ${({ theme }) => theme.colors.background};
       }
 
-      button {
-        all: unset;
-        width: 100%;
+      div {
         text-align: center;
-        cursor: pointer;
       }
     }
   }
@@ -94,9 +91,7 @@ function SelectBox({ current, label, options, onChange }: SelectBoxProps) {
           {options.map((option, i) =>
             option.name === current ? null : (
               <li key={i}>
-                <button onClick={() => onChange(option.code)}>
-                  {option.name}
-                </button>
+                <div onClick={() => onChange(option.code)}>{option.name}</div>
               </li>
             )
           )}

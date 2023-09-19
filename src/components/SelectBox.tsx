@@ -5,9 +5,10 @@ export type SelectBoxProps = {
   label: string;
   options: {
     name: string;
-    code?: string;
+    code: string;
   }[];
   current: string;
+  onChange: (curr: string) => void;
 };
 
 const StyledSelectBox = styled.div`
@@ -26,9 +27,19 @@ const StyledSelectBox = styled.div`
     position: relative;
     padding: 15px 0;
 
+    svg {
+      font-size: 0.75rem;
+      transform: rotate(0);
+      transition: transform 250ms;
+    }
+
     &:hover {
       ul {
         transform: scaleY(1);
+      }
+
+      svg {
+        transform: rotate(90deg);
       }
     }
   }
@@ -72,7 +83,7 @@ const StyledSelectBox = styled.div`
   }
 `;
 
-function SelectBox({ current, label, options }: SelectBoxProps) {
+function SelectBox({ current, label, options, onChange }: SelectBoxProps) {
   return (
     <StyledSelectBox>
       <span>{label}</span>
@@ -83,7 +94,9 @@ function SelectBox({ current, label, options }: SelectBoxProps) {
           {options.map((option, i) =>
             option.name === current ? null : (
               <li key={i}>
-                <button>{option.name}</button>
+                <button onClick={() => onChange(option.code)}>
+                  {option.name}
+                </button>
               </li>
             )
           )}

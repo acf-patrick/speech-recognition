@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const StyledApp = styled.div`
+const StyledApp = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,6 +24,11 @@ const StyledApp = styled.div`
 
   input {
     cursor: pointer;
+
+    &[type="checkbox"] {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
   }
 `;
 

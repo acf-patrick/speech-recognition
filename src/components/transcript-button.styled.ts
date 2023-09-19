@@ -22,7 +22,7 @@ const StyledTranscriptButton = styled.button`
     color: ${({ theme }) => theme.colors.background};
   }
 
-  #icon {
+  svg {
     font-size: 65px;
   }
 `;

@@ -48,11 +48,18 @@ function App() {
   const formOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const cmd = Command.sidecar("main");
+    const cmd = Command.sidecar("whisper/main", [
+      "-m",
+      "dataset",
+      "-f",
+      "D:/output.wav",
+      "--output-file",
+      "D:/audio.txt"
+    ]);
     cmd
       .execute()
       .then((res) => {
-        console.log(res.stdout);
+        console.log(res);
       })
       .catch((err) => console.error(err));
   };

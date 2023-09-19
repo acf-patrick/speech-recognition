@@ -24,7 +24,9 @@
       },
       "shell": {
         "sidecar": true,
-        "scope": [{ "name": "whisper/main", "sidecar": true }]
+        "scope": [
+          { "name": "whisper/main", "sidecar": true, "args": true }
+        ]
       }
     },
     "bundle": {
@@ -34,7 +36,7 @@
       "deb": {
         "depends": []
       },
-      "externalBin": ["./whisper/main"],
+      "externalBin": ["whisper/main"],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",

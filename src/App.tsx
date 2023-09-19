@@ -1,35 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { StyledApp } from "./components/app-styled";
+import { GlobalStyles } from "./styles/globalStyles";
+import { ThemeProvider } from "styled-components";
+import { theme } from "./styles/theme";
+import SelectBox, { SelectBoxProps } from "./components/SelectBox";
+import { StyledChooseButton } from "./components/choose-button.styled";
+import { AiFillFileAdd, AiFillSave, AiOutlineAudio } from "react-icons/ai";
+import { StyledTranscriptButton } from "./components/transcript-button.styled";
+import { StyledActions } from "./components/actions.styled";
+
+const options: SelectBoxProps[] = [
+  {
+    label: "Langue",
+    current: "Anglais",
+    options: [
+      { name: "Auto", code: "" },
+      { name: "Anglais", code: "en" },
+      { name: "Français", code: "fr" },
+      { name: "Espagnol", code: "es" },
+      { name: "Chinese", code: "ch" },
+    ],
+  },
+  {
+    label: "Type de sortie",
+    current: "TXT",
+    options: [
+      { name: "TXT", code: "txt" },
+      { name: "VTT", code: "vtt" },
+      { name: "SRT", code: "srt" },
+      { name: "LRC", code: "lrc" },
+      { name: "CSV", code: "cvs" },
+      { name: "JSON", code: "json" },
+    ],
+  },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [chosenFilePath, setChosenFilePath] = useState("");
+  const [outputFolderPath, setChosenFolderPath] = useState("");
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <ThemeProvider theme={theme}>
+      <GlobalStyles />
+      <StyledApp>
+        {options.map((option, i) => (
+          <SelectBox {...option} key={i} />
+        ))}
+        <StyledActions>
+          <StyledChooseButton title="Choisir le fichier">
+            <AiFillFileAdd />
+          </StyledChooseButton>
+          <StyledTranscriptButton>
+            <AiOutlineAudio id="icon" />
+            <span>Transcrire</span>
+          </StyledTranscriptButton>
+          <StyledChooseButton title="Choisir le fichier de sortie">
+            <AiFillSave />
+          </StyledChooseButton>
+        </StyledActions>
+        <div>
+          <label htmlFor="translate">Traduire en anglais: </label>
+          <input name="translate" type="checkbox" id="translate" />
+        </div>
+      </StyledApp>
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;

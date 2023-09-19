@@ -13,6 +13,7 @@ import { theme } from "./styles/theme";
 import { AiFillFileAdd, AiFillSave, AiOutlineAudio } from "react-icons/ai";
 import { BiError } from "react-icons/bi";
 import { dialog } from "@tauri-apps/api";
+import { Command } from "@tauri-apps/api/shell";
 
 const langList = {
   label: "Langue",
@@ -46,6 +47,14 @@ function App() {
 
   const formOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const cmd = Command.sidecar("main");
+    cmd
+      .execute()
+      .then((res) => {
+        console.log(res.stdout);
+      })
+      .catch((err) => console.error(err));
   };
 
   const chooseOutputOnClick = () => {

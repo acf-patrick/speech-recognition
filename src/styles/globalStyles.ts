@@ -22,5 +22,14 @@ export const GlobalStyles = createGlobalStyle`
         color: ${({ theme }) => theme.colors.primary};
         margin: unset;
         padding: unset;
+
+        #back {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        backdrop-filter: blur(2px);
+        }
     }
 `;

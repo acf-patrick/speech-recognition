@@ -16,39 +16,15 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { appWindow } from "@tauri-apps/api/window";
 import { AiFillFileAdd, AiFillSave, AiOutlineAudio } from "react-icons/ai";
 import { LuFileInput, LuFileOutput } from "react-icons/lu";
-import Modal from "./components/Modal";
+import { langList, formatList } from "./App";
 
-const langList = {
-  label: "Langue",
-  options: [
-    { name: "Auto", code: "" },
-    { name: "Anglais", code: "en" },
-    { name: "Français", code: "fr" },
-    { name: "Espagnol", code: "es" },
-    { name: "Chinese", code: "ch" },
-  ],
-};
-
-const formatList = {
-  label: "Type de sortie",
-  options: [
-    { name: "TXT", code: "txt" },
-    { name: "VTT", code: "vtt" },
-    { name: "SRT", code: "srt" },
-    { name: "LRC", code: "lrc" },
-    { name: "CSV", code: "csv" },
-    { name: "JSON", code: "json" },
-  ],
-};
-
-function App() {
+export function App() {
   const [language, setLanguage] = useState("en");
   const [outputFormat, setOutputFormat] = useState("txt");
   const [chosenFilePath, setChosenFilePath] = useState("");
   const [outputPath, setOutputPath] = useState("");
   const [error, setError] = useState("");
   const initialized = useRef(false);
-  const [showModal, setShowModal] = useState(true);
 
   useEffect(() => {
     if (!initialized.current) {
@@ -193,7 +169,7 @@ function App() {
             <div className="error"></div>
           )}
         </div>
-        {showModal ? <Modal onClose={() => setShowModal(false)} /> : null}
+        <Modal />
         <div>
           <StyledActions>
             <StyledChooseButton
@@ -224,5 +200,3 @@ function App() {
     </ThemeProvider>
   );
 }
-
-export default App;

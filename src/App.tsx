@@ -78,6 +78,7 @@ function App() {
 
       appWindow.listen<string>("terminated", (_e) => {
         console.log("Transcription finished successfully!");
+        setProgress(100);
       });
     }
   }, []);

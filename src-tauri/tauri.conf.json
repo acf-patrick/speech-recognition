@@ -16,7 +16,8 @@
           "$RESOURCE/SDL2.dll",
           "$RESOURCE/whisper.dll",
           "$RESOURCE/dataset"
-        ]
+        ],
+        "writeFile": true
       },
       "dialog": {
         "open": true,
@@ -24,8 +25,14 @@
       },
       "shell": {
         "sidecar": true,
+        "execute": true,
         "scope": [
-          { "name": "whisper/main", "sidecar": true, "args": true }
+          { "name": "whisper/main", "sidecar": true, "args": true },
+          {
+            "name": "ping",
+            "cmd": "ping",
+            "args": true
+          }
         ]
       }
     },
@@ -71,7 +78,7 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 520,
+        "height": 560,
         "resizable": false,
         "title": "Transcripteur audio",
         "width": 640

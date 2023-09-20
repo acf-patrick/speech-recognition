@@ -19,6 +19,8 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     body {
-        color: ${({ theme }) => theme.colors.primary}
+        color: ${({ theme }) => theme.colors.primary};
+        margin: unset;
+        padding: unset;
     }
 `;

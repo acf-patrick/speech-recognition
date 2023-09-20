@@ -4,19 +4,26 @@ const StyledApp = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-between;
   width: ${({ theme }) => theme.sizes.window.width};
+  height: calc(100vh - 1.5rem);
   overflow: hidden;
   margin: 0 auto;
-  gap: 1rem;
 
   & > div {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
+    &:last-of-type > div:last-child {
+      margin-top: 1rem;
+      justify-content: center;
+    }
 
-    p {
-      margin: 0;
+    & > div {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+
+      p {
+        margin: 0;
+      }
     }
   }
 
@@ -26,6 +33,15 @@ const StyledApp = styled.form`
     &[type="checkbox"] {
       width: 1.5rem;
       height: 1.5rem;
+    }
+  }
+
+  .file {
+    cursor: pointer;
+    color: #ffffff84;
+
+    span {
+      padding-left: 1rem;
     }
   }
 

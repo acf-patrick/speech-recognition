@@ -48,7 +48,10 @@ function App() {
   const [outputPath, setOutputPath] = useState("");
   const [error, setError] = useState("");
   const initialized = useRef(false);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const translateInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!initialized.current) {
@@ -60,6 +63,13 @@ function App() {
 
       appWindow.listen<string>("stderr", (line) => {
         console.error(line.payload);
+        if (line.payload.includes("%")) {
+          const parts = line.payload.split(" ");
+          const percent = parts.filter((part) => part.includes("%"));
+          let val = parseInt(percent[0].trim().replace("%", ""));
+          if (val > 100) val = 100;
+          setProgress(val);
+        }
       });
 
       appWindow.listen<string>("error", (line) => {
@@ -86,7 +96,7 @@ function App() {
     }
 
     const input = document.querySelector("#translate") as HTMLInputElement;
-
+    setShowModal(true);
     invoke("call_whisper", {
       audioPath: chosenFilePath,
       outputPath: outputPath.replace("." + outputFormat, ""),
@@ -136,6 +146,16 @@ function App() {
       .catch((err) => console.error(err))
       .finally(() => setError(""));
   };
+
+  const closeModal = () => {
+    setShowModal(false);
+    if (progress == 100) {
+      setProgress(0);
+      setChosenFilePath("");
+      setOutputPath("");
+      translateInputRef.current!.checked = false;
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -193,7 +213,7 @@ function App() {
             <div className="error"></div>
           )}
         </div>
-        {showModal ? <Modal onClose={() => setShowModal(false)} /> : null}
+        {showModal ? <Modal progress={progress} onClose={closeModal} /> : null}
         <div>
           <StyledActions>
             <StyledChooseButton
@@ -217,7 +237,7 @@ function App() {
           </StyledActions>
           <div>
             <label htmlFor="translate">Traduire en anglais: </label>
-            <input name="translate" type="checkbox" id="translate" />
+            <input name="translate" type="checkbox" id="translate" ref={translateInputRef} />
           </div>
         </div>
       </StyledApp>

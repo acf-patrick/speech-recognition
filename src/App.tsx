@@ -63,6 +63,10 @@ function App() {
       appWindow.listen<string>("error", (line) => {
         setError(line.payload);
       });
+
+      appWindow.listen<string>("terminated", (_e) => {
+        console.log("Transcription finished successfully!");
+      });
     }
   }, []);
 
@@ -79,31 +83,17 @@ function App() {
       return;
     }
 
+    const input = document.querySelector("#translate") as HTMLInputElement;
+
     invoke("call_whisper", {
-      audioPath: "D:/FIT_Apprenti_Vague_006/whisper/essai1.wav",
+      audioPath: chosenFilePath,
+      outputPath: outputPath.replace("." + outputFormat, ""),
+      language: language ? language : null,
+      extension: outputFormat,
+      translate: input.checked,
     })
       .then((res) => console.log(res))
       .catch((err) => console.error(err));
-
-    /*const cmd = Command.sidecar("whisper/main", [
-      "-m",
-      "dataset",
-      "-f",
-      "D:/FIT_Apprenti_Vague_006/whisper/essai1.wav",
-      "2>",
-      "D:/stdout.txt",
-    ]);
-
-    cmd.addListener("error", (args) => {
-      console.error(args);
-    });
-
-    cmd
-      .execute()
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => console.error(err));*/
   };
 
   const chooseOutputOnClick = () => {

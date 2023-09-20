@@ -7,10 +7,49 @@ use tauri::{
 };
 
 #[tauri::command]
-fn call_whisper(window: Window, audio_path: String) {
+fn call_whisper(
+    window: Window,
+    audio_path: String,
+    output_path: String,
+    language: Option<String>,
+    extension: String,
+    translate: bool,
+) {
+    let ext = match extension.as_str() {
+        "txt" => "--output-txt",
+        "vtt" => "--output-vtt",
+        "srt" => "--output-srt",
+        "lrc" => "--output-lrc",
+        "csv" => "--output-csv",
+        "json" => "--output-json",
+        _ => "",
+    };
+
+    let mut args = vec![
+        "-m".to_owned(),
+        "dataset".to_owned(),
+        ext.to_owned(),
+        "--output-file".to_owned(),
+        output_path,
+        "-f".to_owned(),
+        audio_path,
+    ];
+
+    if translate {
+        args.push("--translate".to_owned());
+    }
+
+    match language {
+        Some(lang) => {
+            args.push("-l".to_owned());
+            args.push(lang.clone());
+        }
+        None => (),
+    };
+
     let (mut rx, _) = Command::new_sidecar("main")
         .expect("Failed to call sidecar whisper")
-        .args(["-m", "dataset", "-l", "fr", "-f", audio_path.as_str()])
+        .args(args)
         .spawn()
         .expect("Failed to spawn sidecar");
 
@@ -31,6 +70,11 @@ fn call_whisper(window: Window, audio_path: String) {
                     window
                         .emit("error", line)
                         .expect("Failed to emit error event");
+                }
+                CommandEvent::Terminated(_t) => {
+                    window
+                        .emit("terminated", "")
+                        .expect("Failed to emit terminated event");
                 }
                 _ => (),
             }

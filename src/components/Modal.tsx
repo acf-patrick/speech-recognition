@@ -17,7 +17,7 @@ const StyledModal = styled.div`
   flex-direction: column;
   align-items: center;
 
-  button {
+  .close {
     all: unset;
     position: absolute;
     top: 0.3rem;
@@ -63,7 +63,21 @@ const StyledModal = styled.div`
   }
 
   p {
-    margin: 0;
+    margin: 15px 0;
+  }
+
+  button {
+    &:last-of-type {
+      all: unset;
+      position: absolute;
+      bottom: 1rem;
+      right: 3rem;
+      background-color: red;
+      padding: 3px 15px;
+      border-radius: 5px;
+      font-weight: 400;
+      cursor: pointer;
+    }
   }
 `;
 
@@ -76,7 +90,7 @@ function Modal({ onClose }: { onClose: () => void }) {
     <>
       <div id="back" onClick={onClose}></div>
       <StyledModal>
-        <button onClick={onClose}>
+        <button className="close" onClick={onClose}>
           <CgCloseR />
         </button>
         <h1>Progression</h1>
@@ -85,6 +99,7 @@ function Modal({ onClose }: { onClose: () => void }) {
           <span>{progress}%</span>
         </div>
         <p>Temps de calcul: {time}</p>
+        <button onClick={onClose}>Annuler</button>
       </StyledModal>
     </>,
     modal

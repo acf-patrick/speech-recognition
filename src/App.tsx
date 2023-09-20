@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   StyledApp,
   StyledChooseButton,
@@ -45,24 +45,39 @@ function App() {
   const [outputFormat, setOutputFormat] = useState("txt");
   const [chosenFilePath, setChosenFilePath] = useState("");
   const [outputPath, setOutputPath] = useState("");
-  const [error, setError] = useState("erreur be ty rlerony e");
+  const [error, setError] = useState("");
+  const initialized = useRef(false);
 
   useEffect(() => {
-    appWindow.listen<string>("stdout", (line) => {
-      console.log(line.payload);
-    });
+    if (!initialized.current) {
+      initialized.current = true;
 
-    appWindow.listen<string>("stderr", (line) => {
-      console.error(line.payload);
-    });
+      appWindow.listen<string>("stdout", (line) => {
+        console.log(line.payload);
+      });
 
-    appWindow.listen<string>("error", (line) => {
-      setError(line.payload);
-    });
+      appWindow.listen<string>("stderr", (line) => {
+        console.error(line.payload);
+      });
+
+      appWindow.listen<string>("error", (line) => {
+        setError(line.payload);
+      });
+    }
   }, []);
 
   const formOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!chosenFilePath) {
+      setError("Aucun fichier audio séléctionné.");
+      return;
+    }
+
+    if (!outputPath) {
+      setError("Aucun fichier de sortie séléctionné.");
+      return;
+    }
 
     invoke("call_whisper", {
       audioPath: "D:/FIT_Apprenti_Vague_006/whisper/essai1.wav",
@@ -106,7 +121,8 @@ function App() {
           setOutputPath(path);
         }
       })
-      .catch();
+      .catch((err) => console.error(err))
+      .finally(() => setError(""));
   };
 
   const chooseInputOnClick = () => {
@@ -125,7 +141,8 @@ function App() {
           setChosenFilePath(path as string);
         }
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error(err))
+      .finally(() => setError(""));
   };
 
   return (

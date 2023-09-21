@@ -50,7 +50,20 @@ fn call_whisper(
         None => (),
     };
 
-    let (mut rx, _) = Command::new_sidecar("main")
+    let output = Command::new("nvcc").arg("--version").output();
+    let program_name = match output {
+        Ok(res) => {
+            println!("CUDA present, using CUDA driver for faster process...");
+            "main-cuda"
+        }
+        Err(err) => {
+            println!("CUDA not present, using cpu to process...");
+            "main"
+        }
+        _ => false,
+    };
+
+    let (mut rx, _) = Command::new_sidecar(program_name)
         .expect("Failed to call sidecar whisper")
         .args(args)
         .spawn()

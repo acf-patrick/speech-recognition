@@ -28,11 +28,7 @@
         "execute": true,
         "scope": [
           { "name": "whisper/main", "sidecar": true, "args": true },
-          {
-            "name": "ping",
-            "cmd": "ping",
-            "args": true
-          }
+          { "name": "whisper/main-cuda", "sidecar": true, "args": true }
         ]
       }
     },
@@ -43,7 +39,7 @@
       "deb": {
         "depends": []
       },
-      "externalBin": ["whisper/main"],
+      "externalBin": ["whisper/main", "whisper/main-cuda"],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",

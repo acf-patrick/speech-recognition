@@ -5,7 +5,7 @@ use std::env;
 
 use tauri::{
     api::process::{kill_children, Command, CommandEvent},
-    Window,
+    Manager, Window,
 };
 
 #[tauri::command]
@@ -69,18 +69,15 @@ fn call_whisper(
         None => (),
     };
 
-    let output = Command::new("nvcc").arg("--version").output();
-    let program_name = match output {
-        Ok(res) => {
-            println!("CUDA present, using CUDA driver for faster process...");
-            "main-cuda"
-        }
-        Err(err) => {
-            println!("CUDA not present, using cpu to process...");
-            "main"
-        }
-        _ => false,
-    };
+    let program_name;
+    if let Some(_) = env::var_os("CUDA_PATH") {
+        println!("CUDA is present, using CUDA for faster process...");
+        program_name = "maincuda".to_string();
+        println!("{}", program_name.as_str());
+    } else {
+        println!("CUDA is not present, using cpu for process...");
+        program_name = "main".to_string();
+    }
 
     let (mut rx, _) = Command::new_sidecar(program_name)
         .expect("Failed to call sidecar whisper")
@@ -119,6 +116,11 @@ fn call_whisper(
 
 fn main() {
     tauri::Builder::default()
+        .setup(|app| {
+            #[cfg(debug_assertions)]
+            app.get_window("main").unwrap().open_devtools();
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             call_whisper,
             kill_computation,

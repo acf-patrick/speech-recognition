@@ -69,17 +69,7 @@ fn call_whisper(
         None => (),
     };
 
-    let program_name;
-    if let Some(_) = env::var_os("CUDA_PATH") {
-        println!("CUDA is present, using CUDA for faster process...");
-        program_name = "maincuda".to_string();
-        println!("{}", program_name.as_str());
-    } else {
-        println!("CUDA is not present, using cpu for process...");
-        program_name = "main".to_string();
-    }
-
-    let (mut rx, _) = Command::new_sidecar(program_name)
+    let (mut rx, _) = Command::new_sidecar("main")
         .expect("Failed to call sidecar whisper")
         .args(args)
         .spawn()

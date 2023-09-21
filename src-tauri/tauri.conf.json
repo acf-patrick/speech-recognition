@@ -14,7 +14,8 @@
       "fs": {
         "scope": [
           "$RESOURCE/SDL2.dll",
-          "$RESOURCE/whisper.dll",
+          "$RESOURCE/whisper-vanilla.dll",
+          "$RESOURCE/whisper-cuda.dll",
           "$RESOURCE/dataset"
         ],
         "writeFile": true
@@ -57,7 +58,7 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": ["SDL2.dll", "whisper.dll", "dataset"],
+      "resources": ["SDL2.dll", "whisper-vanilla.dll", "whisper-cuda.dll", "dataset"],
       "shortDescription": "",
       "targets": "all",
       "windows": {

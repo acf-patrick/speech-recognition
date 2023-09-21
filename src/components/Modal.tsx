@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { CgCloseR } from "react-icons/cg";
 import styled from "styled-components";
+import { invoke } from "@tauri-apps/api";
+import { FaFolderOpen } from "react-icons/fa";
 
 const StyledModal = styled.div`
   position: absolute;
@@ -16,15 +18,6 @@ const StyledModal = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  .close {
-    all: unset;
-    position: absolute;
-    top: 0.3rem;
-    right: 0.5rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
 
   h1 {
     margin: 1rem 0;
@@ -50,6 +43,19 @@ const StyledModal = styled.div`
     }
   }
 
+  p {
+    margin: 15px 0;
+  }
+
+  .close {
+    all: unset;
+    position: absolute;
+    top: 0.3rem;
+    right: 0.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
   .prog-container {
     position: relative;
 
@@ -64,21 +70,33 @@ const StyledModal = styled.div`
     }
   }
 
-  p {
-    margin: 15px 0;
+  .btn-folder {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    padding: unset;
+    right: 2rem;
   }
 `;
 
 const StyledButton = styled.button<{ $color: string }>`
-    all: unset;
-    position: absolute;
-    bottom: 1rem;
-    right: 3rem;
-    background-color: ${({ $color }) => $color};
-    padding: 3px 15px;
-    border-radius: 5px;
-    font-weight: 400;
-    cursor: pointer;
+  all: unset;
+  position: absolute;
+  bottom: 1rem;
+  right: 3rem;
+  color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ $color }) => $color};
+  padding: 3px 15px;
+  border-radius: 5px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 500ms;
+
+  &:hover {
+    background-color: transparent;
+    outline: 2px solid ${({ $color }) => $color};
+  }
 `;
 
 function secondsToHHMMSS(seconds: number): string {
@@ -86,10 +104,20 @@ function secondsToHHMMSS(seconds: number): string {
   const minutes = Math.floor((seconds % 3600) / 60);
   const remainingSeconds = seconds % 60;
 
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  return `${hours.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
 }
 
-function Modal({ onClose, progress }: { onClose: () => void, progress: number }) {
+function Modal({
+  onClose,
+  progress,
+  outputFile,
+}: {
+  onClose: () => void;
+  progress: number;
+  outputFile: string;
+}) {
   const [time, setTime] = useState(0);
   const modal = document.querySelector("#modal");
   if (!modal) return null;
@@ -100,17 +128,31 @@ function Modal({ onClose, progress }: { onClose: () => void, progress: number })
         setTime(time + 1);
       }, 1000);
     }
-    console.log(time)
-  }, [time])
+  }, [time]);
 
   const buttonColor = progress >= 100 ? "green" : "red";
-  const buttonText = progress >= 100 ? "OK" : "Annuler";
+
+  const close = () => {
+    invoke("kill_computation")
+      .then((res) => {
+        console.log(res);
+        console.log("process killed");
+      })
+      .catch((err) => console.error(err));
+    onClose();
+  };
+
+  const openOutputLocation = () => {
+    invoke("open_file_location", {
+      file: outputFile,
+    }).catch((err) => console.error(err));
+  };
 
   return createPortal(
     <>
       <div id="back"></div>
       <StyledModal>
-        <button className="close" onClick={onClose}>
+        <button className="close" onClick={close}>
           <CgCloseR />
         </button>
         <h1>Progression</h1>
@@ -119,7 +161,20 @@ function Modal({ onClose, progress }: { onClose: () => void, progress: number })
           <span>{progress}%</span>
         </div>
         <p>Temps de calcul: {secondsToHHMMSS(time)}</p>
-        <StyledButton $color={buttonColor} onClick={onClose}>{buttonText}</StyledButton>
+        {progress >= 100 ? (
+          <StyledButton
+            $color={buttonColor}
+            onClick={openOutputLocation}
+            className="btn-folder"
+            title="Ouvrir l'emplacement du fichier"
+          >
+            <FaFolderOpen />
+          </StyledButton>
+        ) : (
+          <StyledButton $color={buttonColor} onClick={close}>
+            Annuler
+          </StyledButton>
+        )}
       </StyledModal>
     </>,
     modal

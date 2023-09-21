@@ -1,6 +1,8 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::env;
+
 use tauri::{
     api::process::{Command, CommandEvent},
     Window,
@@ -33,6 +35,7 @@ fn call_whisper(
         output_path,
         "-f".to_owned(),
         audio_path,
+        "--print-progress".to_owned(),
     ];
 
     if translate {

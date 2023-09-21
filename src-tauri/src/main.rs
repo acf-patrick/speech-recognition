@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::env;
+use std::{env, fs};
 
 use tauri::{
     api::process::{kill_children, Command, CommandEvent},
@@ -69,7 +69,19 @@ fn call_whisper(
         None => (),
     };
 
-    let (mut rx, _) = Command::new_sidecar("main")
+    let program_name: String;
+
+    if let Some(_) = env::var_os("CUDA_PATH") {
+        println!("CUDA is supported on this device, process will be faster...");
+        fs::copy("whisper-cuda.dll", "whisper.dll").expect("Can't copy dll");
+        program_name = "maincuda".to_string();
+    } else {
+        println!("CUDA is not supported on this device, process will use cpu...");
+        fs::copy("whisper-vanilla.dll", "whisper.dll").expect("Can't copy dll");
+        program_name = "main".to_string();
+    }
+
+    let (mut rx, _) = Command::new_sidecar(program_name)
         .expect("Failed to call sidecar whisper")
         .args(args)
         .spawn()

@@ -84,7 +84,7 @@ function SelectBox({ current, label, options, onChange }: SelectBoxProps) {
   return (
     <StyledSelectBox>
       <span>{label}</span>
-      <button className="toggler">
+      <button className="toggler" type="button">
         <span>{current}</span>
         <SlArrowRight />
         <ul>

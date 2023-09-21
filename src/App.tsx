@@ -155,11 +155,6 @@ function App() {
   const closeModal = () => {
     setShowModal(false);
     setProgress(0);
-    if (progress == 100) {
-      setChosenFilePath("");
-      setOutputPath("");
-      translateInputRef.current!.checked = false;
-    }
   };
 
   return (

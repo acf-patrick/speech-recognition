@@ -4,9 +4,28 @@
 use std::env;
 
 use tauri::{
-    api::process::{Command, CommandEvent},
+    api::process::{kill_children, Command, CommandEvent},
     Window,
 };
+
+#[tauri::command]
+fn kill_computation() {
+    kill_children();
+}
+
+#[tauri::command]
+fn open_file_location(file: String) -> Result<(), String> {
+    if let Err(_) = std::process::Command::new("explorer")
+        .args(["/select,", file.as_str()])
+        .spawn()
+    {
+        Err(String::from(
+            "Impossible d'ouvrir l'emplacement du fichier.",
+        ))
+    } else {
+        Ok(())
+    }
+}
 
 #[tauri::command]
 fn call_whisper(
@@ -87,7 +106,7 @@ fn call_whisper(
                         .emit("error", line)
                         .expect("Failed to emit error event");
                 }
-                CommandEvent::Terminated(_t) => {
+                CommandEvent::Terminated(_) => {
                     window
                         .emit("terminated", "")
                         .expect("Failed to emit terminated event");
@@ -100,7 +119,11 @@ fn call_whisper(
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![call_whisper])
+        .invoke_handler(tauri::generate_handler![
+            call_whisper,
+            kill_computation,
+            open_file_location
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

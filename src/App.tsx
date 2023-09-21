@@ -42,16 +42,16 @@ const formatList = {
 };
 
 function App() {
+  const initialized = useRef(false);
+  const [error, setError] = useState("");
+  const [progress, setProgress] = useState(0);
   const [language, setLanguage] = useState("en");
+  const [outputPath, setOutputPath] = useState("");
+  const [showModal, setShowModal] = useState(false);
   const [outputFormat, setOutputFormat] = useState("txt");
   const [chosenFilePath, setChosenFilePath] = useState("");
-  const [outputPath, setOutputPath] = useState("");
-  const [error, setError] = useState("");
-  const initialized = useRef(false);
-  const [showModal, setShowModal] = useState(false);
-  const [progress, setProgress] = useState(0);
-
-  const translateInputRef = useRef<HTMLInputElement>(null)
+  
+  const translateInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!initialized.current) {
@@ -62,13 +62,14 @@ function App() {
       });
 
       appWindow.listen<string>("stderr", (line) => {
-        console.error(line.payload);
         if (line.payload.includes("%")) {
           const parts = line.payload.split(" ");
           const percent = parts.filter((part) => part.includes("%"));
           let val = parseInt(percent[0].trim().replace("%", ""));
           if (val > 100) val = 100;
           setProgress(val);
+        } else {
+          console.error(line.payload);
         }
       });
 
@@ -76,7 +77,7 @@ function App() {
         setError(line.payload);
       });
 
-      appWindow.listen<string>("terminated", (_e) => {
+      appWindow.listen("terminated", () => {
         console.log("Transcription finished successfully!");
         setProgress(100);
       });
@@ -95,6 +96,9 @@ function App() {
       setError("Aucun fichier de sortie séléctionné.");
       return;
     }
+
+    // set progress bar to 0%
+    setProgress(0);
 
     const input = document.querySelector("#translate") as HTMLInputElement;
     setShowModal(true);
@@ -150,13 +154,13 @@ function App() {
 
   const closeModal = () => {
     setShowModal(false);
+    setProgress(0);
     if (progress == 100) {
-      setProgress(0);
       setChosenFilePath("");
       setOutputPath("");
       translateInputRef.current!.checked = false;
     }
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -214,7 +218,13 @@ function App() {
             <div className="error"></div>
           )}
         </div>
-        {showModal ? <Modal progress={progress} onClose={closeModal} /> : null}
+        {showModal ? (
+          <Modal
+            progress={progress}
+            onClose={closeModal}
+            outputFile={outputPath}
+          />
+        ) : null}
         <div>
           <StyledActions>
             <StyledChooseButton
@@ -238,7 +248,12 @@ function App() {
           </StyledActions>
           <div>
             <label htmlFor="translate">Traduire en anglais: </label>
-            <input name="translate" type="checkbox" id="translate" ref={translateInputRef} />
+            <input
+              name="translate"
+              type="checkbox"
+              id="translate"
+              ref={translateInputRef}
+            />
           </div>
         </div>
       </StyledApp>

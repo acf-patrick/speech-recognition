@@ -108,7 +108,7 @@ function Modal({ onClose, progress }: { onClose: () => void, progress: number })
 
   return createPortal(
     <>
-      <div id="back" onClick={onClose}></div>
+      <div id="back"></div>
       <StyledModal>
         <button className="close" onClick={onClose}>
           <CgCloseR />
